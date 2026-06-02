@@ -3,111 +3,1033 @@
   const mapToken = "<%= process.env.MAP_TOKEN %>";
   const listing = <%- JSON.stringify(listing) %>;
 </script>
-<div class="row mt-3">
-  <div class="col-12 col-md-8 offset-md-2">
-    <h3><%= listing.title %></h3>
-  </div>
-  <div class="card col-12 col-md-8 offset-md-2 show-card listing-card">
-    <img src="<%= listing.image.url %>" class="card-img-top show-img" alt="listing_image">
-    <div class="card-body">
-      <p class="card-text">Owned by :<i><%= listing.owner.username %></i></p>
 
-        <p class="card-text"><b><%= listing.title %></b></p>
-        <p class="card-text"><%= listing.description %></p>
-        <p class="card-text">&#8377; <%= listing.price.toLocaleString("en-IN") %></p>
-        <p class="card-text"><%= listing.location %></p>
-        <p class="card-text"><%= listing.country %></p>
-      </p>
+<style>
+  /* Premium layout styling */
+  .show-container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding-top: 1.5rem;
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
+  .show-header-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #222222;
+    margin-bottom: 0.3rem;
+  }
+  .show-header-meta {
+    font-size: 0.9rem;
+    color: #717171;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .show-header-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .show-header-meta a {
+    color: #222222;
+    text-decoration: underline;
+    font-weight: 500;
+  }
+  .show-gallery {
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .show-gallery img {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .show-gallery img:hover {
+    transform: scale(1.008);
+  }
+
+  /* Host Details Column style */
+  .host-header {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .host-name {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #222222;
+  }
+  .room-specs {
+    color: #717171;
+    font-size: 1rem;
+    margin-top: 4px;
+  }
+  .host-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff385c 0%, #d70466 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    border: 1px solid #ddd;
+  }
+  
+  /* Highlights list */
+  .highlights-section {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .highlight-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 1.5rem;
+  }
+  .highlight-item:last-child {
+    margin-bottom: 0;
+  }
+  .highlight-icon {
+    font-size: 1.4rem;
+    color: #222222;
+    width: 24px;
+    text-align: center;
+    margin-top: 2px;
+  }
+  .highlight-title {
+    font-weight: 600;
+    color: #222222;
+    font-size: 0.95rem;
+    margin-bottom: 2px;
+  }
+  .highlight-desc {
+    color: #717171;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  
+  .description-section {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #222222;
+    line-height: 1.6;
+    font-size: 1rem;
+    white-space: pre-line;
+  }
+  
+  .amenities-section {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .amenities-section h4 {
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    font-size: 1.2rem;
+  }
+  .amenities-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .amenity-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #222222;
+    font-size: 0.95rem;
+  }
+  .amenity-item i {
+    width: 20px;
+    text-align: center;
+    color: #717171;
+    font-size: 1.1rem;
+  }
+
+  /* Booking Card Widget */
+  .booking-widget-container {
+    position: sticky;
+    top: 100px;
+    margin-bottom: 2rem;
+  }
+  .booking-card {
+    border: 1px solid #dddddd;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    background-color: white;
+  }
+  .booking-price-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 20px;
+  }
+  .booking-price-val {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #222222;
+  }
+  .booking-card-inputs {
+    border: 1px solid #8c8c8c;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .date-inputs-row {
+    display: flex;
+    border-bottom: 1px solid #8c8c8c;
+  }
+  .date-input-col {
+    flex: 1;
+    padding: 10px 12px;
+    background-color: white;
+  }
+  .date-input-col:first-child {
+    border-right: 1px solid #8c8c8c;
+  }
+  .date-label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #222222;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .date-field {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 0.85rem;
+    color: #222222;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .guests-input-col {
+    padding: 10px 12px;
+  }
+  .guest-select {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 0.85rem;
+    color: #222222;
+    font-weight: 500;
+    cursor: pointer;
+    background: transparent;
+  }
+  .reserve-btn {
+    width: 100%;
+    background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    transition: opacity 0.2s;
+    cursor: pointer;
+  }
+  .reserve-btn:hover {
+    opacity: 0.95;
+  }
+  .reserve-note {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #717171;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+  .price-calc-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    color: #222222;
+    font-size: 0.95rem;
+  }
+  .price-calc-row.total-row {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 16px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0;
+  }
+
+  /* Admin buttons styling */
+  .admin-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 1.5rem;
+  }
+  .admin-btn {
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  /* Reviews Section style */
+  .reviews-section {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 2rem;
+    margin-top: 2.5rem;
+  }
+  .reviews-section h4 {
+    font-weight: 600;
+    font-size: 1.3rem;
+  }
+  .review-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    background-color: #fafafa;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .review-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  .review-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .review-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4bb543 0%, #2e7d32 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+  }
+  .review-user-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #222222;
+  }
+  .review-comment {
+    color: #484848;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  
+  /* Map container */
+  .map-section {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 2rem;
+    margin-top: 2.5rem;
+    margin-bottom: 3rem;
+  }
+  .map-section h3 {
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin-bottom: 1.2rem;
+  }
+
+  /* Payment Gateway Modal styling */
+  .checkout-modal-header {
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 16px 24px;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+  }
+  .checkout-modal-body {
+    padding: 24px;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+  .checkout-modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+  }
+  .cc-graphic {
+    background: linear-gradient(135deg, #141e30 0%, #243b55 100%);
+    border-radius: 12px;
+    padding: 20px;
+    color: white;
+    font-family: monospace;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    margin-bottom: 24px;
+    aspect-ratio: 1.586;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .cc-chip {
+    width: 40px;
+    height: 30px;
+    background: linear-gradient(135deg, #f0c27b 0%, #4b1248 100%);
+    border-radius: 6px;
+  }
+  .cc-number-display {
+    font-size: 1.15rem;
+    letter-spacing: 2px;
+    margin-top: 20px;
+  }
+  .cc-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+  }
+  .checkout-tabs {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+  }
+  .checkout-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    font-weight: 600;
+    color: #717171;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .checkout-tab.active {
+    color: #ff385c;
+    border-bottom-color: #ff385c;
+  }
+  .success-screen {
+    text-align: center;
+    padding: 30px 10px;
+  }
+  .success-checkmark {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #4bb543;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    margin: 0 auto 20px auto;
+    animation: scaleUp 0.3s ease-out;
+  }
+  @keyframes scaleUp {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .success-ticket {
+    background-color: #f7f7f7;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    text-align: left;
+  }
+  .success-ticket-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+  }
+  .success-ticket-row:last-child {
+    margin-bottom: 0;
+    border-top: 1px dashed #ccc;
+    padding-top: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+  }
+</style>
+
+<div class="show-container">
+  <!-- Header Title -->
+  <div class="row">
+    <div class="col-12">
+      <h1 class="show-header-title"><%= listing.title %></h1>
+      <div class="show-header-meta">
+        <span><i class="fa-solid fa-star text-danger"></i> 4.93 (Reviews: <%= listing.reviews.length %>)</span>
+        <span>•</span>
+        <span><i class="fa-solid fa-medal text-warning"></i> Guest favourite</span>
+        <span>•</span>
+        <span><a href="#map"><%= listing.location %>, <%= listing.country %></a></span>
+      </div>
     </div>
   </div>
-  <br />
 
-<% if(currUser && listing.owner._id.equals(currUser._id)) {%>
-  <div class="btns">
-    <a 
-      href="/listings/<%= listing._id %>/edit" 
-      class="btn btn-dark col-1 offset-3 edit-btn">Edit
-    </a>
-  
-    <form 
-      method="POST" action="/listings/<%=listing._id%>?_method=DELETE">
-      <button class="btn btn-dark offset-5">Delete</button>
-    </form>
+  <!-- Gallery cover image -->
+  <div class="row">
+    <div class="col-12">
+      <div class="show-gallery">
+        <img src="<%= listing.image.url %>" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=2000';" alt="listing_image">
+      </div>
+    </div>
   </div>
-<% } %>
 
-  <div class="col-12 col-md-8 offset-md-2 mb-3">
-
-    <% if(currUser) {%>
-    <hr>
-    <h4>Leave a Review</h4>
-    <form 
-      action="/listings/<%= listing.id %>/reviews" 
-      method="POST"
-      novalidate 
-      class="needs-validation"
-    >
-
-      <div class="mb-3 mt-3">
-        <label for="rating" class="form-label">Rating</label>
-        <fieldset class="starability-basic">
-          <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
-          <input type="radio" id="first-rate1" name="review[rating]" value="1" />
-          <label for="first-rate1" title="Terrible">1 star</label>
-          <input type="radio" id="first-rate2" name="review[rating]" value="2" />
-          <label for="first-rate2" title="Not good">2 stars</label>
-          <input type="radio" id="first-rate3" name="review[rating]" value="3" />
-          <label for="first-rate3" title="Average">3 stars</label>
-          <input type="radio" id="first-rate4" name="review[rating]" value="4" />
-          <label for="first-rate4" title="Very good">4 stars</label>
-          <input type="radio" id="first-rate5" name="review[rating]" value="5" />
-          <label for="first-rate5" title="Amazing">5 stars</label>
-        </fieldset>
-      </div>
-      <div class="mb-3 mt-3">
-        <lablel for="comment" class="form-label">Comments</lablel>
-        <textarea 
-          name="review[comment]"
-          id="comment" 
-          cols="30" 
-          rows="5"
-          class="form-control"
-          required
-        ></textarea>
-        <div class="invalid-feedback">Please submit some comments for Reviews</div>
-        <button class="btn btn-outline-dark">Submit</button>
-      </div>
-    </form>
-    <hr>
-    <% } %>
-
-    <% if(listing.reviews.length > 0){%>
-      <div class="row">
-        <p><b>All Reviews</b></p>
-        <% for(review of listing.reviews){%>
-          <div class="card col-5 ms-3 mb-3">
-            <div class="card-body">
-              <h5 class="card-title">@<%= review.author.username %></h5>
-              <p class="starability-result card-text" data-rating="<%= review.rating %>"></p>
-              <p class="card-text"><%= review.comment %></p>
-            </div>
-            <form 
-              class="mb-3" 
-              method="POST"
-              action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
-            >
-              <button class="btn btn-sm btn-dark">Delete </button>
-            </form>
+  <!-- Grid layout: info and booking -->
+  <div class="row details-grid">
+    <!-- Left Column: Details -->
+    <div class="col-12 col-lg-7 pr-lg-4">
+      <div class="host-header">
+        <div>
+          <h2 class="host-name">Room in a home hosted by <%= listing.owner ? listing.owner.username : "Wanderer" %></h2>
+          <div class="room-specs">
+            <span>4 guests</span> • <span>1 bedroom</span> • <span>2 beds</span> • <span>1 private bath</span>
           </div>
-        <%}%>
+        </div>
+        <div class="host-avatar">
+          <%= listing.owner ? listing.owner.username.charAt(0) : "W" %>
+        </div>
       </div>
-    <%}%>
+
+      <!-- Listing highlights -->
+      <div class="highlights-section">
+        <div class="highlight-item">
+          <div class="highlight-icon"><i class="fa-solid fa-medal"></i></div>
+          <div>
+            <div class="highlight-title">Superhost</div>
+            <div class="highlight-desc">Highly rated hosts committed to providing great stays for guests.</div>
+          </div>
+        </div>
+        <div class="highlight-item">
+          <div class="highlight-icon"><i class="fa-solid fa-key"></i></div>
+          <div>
+            <div class="highlight-title">Great check-in experience</div>
+            <div class="highlight-desc">95% of recent guests gave the check-in process a 5-star rating.</div>
+          </div>
+        </div>
+        <div class="highlight-item">
+          <div class="highlight-icon"><i class="fa-solid fa-calendar"></i></div>
+          <div>
+            <div class="highlight-title">Free cancellation</div>
+            <div class="highlight-desc">Free cancellation up to 48 hours before check-in.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="description-section">
+        <h4 class="fw-bold mb-3" style="font-size: 1.2rem;">About this space</h4>
+        <%= listing.description %>
+      </div>
+
+      <!-- Amenities -->
+      <div class="amenities-section">
+        <h4>What this place offers</h4>
+        <div class="amenities-grid">
+          <div class="amenity-item"><i class="fa-solid fa-wifi"></i> Fast Wi-Fi</div>
+          <div class="amenity-item"><i class="fa-solid fa-car"></i> Free parking on premises</div>
+          <div class="amenity-item"><i class="fa-solid fa-person-swimming"></i> Private pool</div>
+          <div class="amenity-item"><i class="fa-solid fa-snowflake"></i> Air conditioning</div>
+          <div class="amenity-item"><i class="fa-solid fa-kitchen-set"></i> Full kitchen</div>
+          <div class="amenity-item"><i class="fa-solid fa-tv"></i> HDTV with standard cable</div>
+          <div class="amenity-item"><i class="fa-solid fa-briefcase"></i> Dedicated workspace</div>
+          <div class="amenity-item"><i class="fa-solid fa-shield-virus"></i> First aid kit</div>
+        </div>
+      </div>
+      
+      <!-- Owner actions (Edit / Delete) -->
+      <% if(currUser && listing.owner && listing.owner._id.equals(currUser._id)) {%>
+        <div class="admin-buttons pb-4">
+          <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark admin-btn edit-btn">
+            <i class="fa-solid fa-pen-to-square"></i> Edit Stay
+          </a>
+          <form method="POST" action="/listings/<%=listing._id%>?_method=DELETE" class="d-inline">
+            <button class="btn btn-danger admin-btn">
+              <i class="fa-solid fa-trash-can"></i> Delete Stay
+            </button>
+          </form>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Right Column: Sticky Booking Widget -->
+    <div class="col-12 col-lg-5">
+      <div class="booking-widget-container">
+        <div class="booking-card">
+          <div class="booking-price-header">
+            <div>
+              <span class="booking-price-val">&#8377;<%= listing.price.toLocaleString("en-IN") %></span>
+              <span class="text-secondary small">/ night</span>
+            </div>
+            <div class="small">
+              <i class="fa-solid fa-star"></i> 4.93
+            </div>
+          </div>
+
+          <!-- Date Duration Selection Inputs -->
+          <div class="booking-card-inputs">
+            <div class="date-inputs-row">
+              <div class="date-input-col">
+                <div class="date-label">Check-in</div>
+                <input type="date" class="date-field" id="checkinDate" onchange="calculateNights()">
+              </div>
+              <div class="date-input-col">
+                <div class="date-label">Checkout</div>
+                <input type="date" class="date-field" id="checkoutDate" onchange="calculateNights()">
+              </div>
+            </div>
+            <div class="guests-input-col">
+              <div class="date-label">Guests</div>
+              <select class="guest-select" id="guestCountSelect">
+                <option value="1 guest">1 guest</option>
+                <option value="2 guests" selected>2 guests</option>
+                <option value="3 guests">3 guests</option>
+                <option value="4 guests">4 guests</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Reserve checkout trigger button -->
+          <button class="reserve-btn" type="button" data-bs-toggle="modal" data-bs-target="#paymentModal">Reserve & Pay</button>
+          <div class="reserve-note">You won't be charged yet</div>
+
+          <!-- Dynamic Pricing Calculations -->
+          <div id="pricingDetails">
+            <div class="price-calc-row">
+              <span class="underline-link" id="nightsLabel">&#8377;<%= listing.price.toLocaleString("en-IN") %> x 3 nights</span>
+              <span id="nightsCost">&#8377;0</span>
+            </div>
+            <div class="price-calc-row">
+              <span class="underline-link">18% GST (Taxes)</span>
+              <span id="gstCost">&#8377;0</span>
+            </div>
+            <div class="price-calc-row total-row">
+              <span>Total before taxes</span>
+              <span id="totalCost" class="text-danger">&#8377;0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="col-12 col-md-8 offset-md-2 mb-3">
-    <h3>Where you'll be</h3>
-    <div  id="map"></div>
+
+  <!-- Reviews Section -->
+  <div class="row reviews-section">
+    <div class="col-12">
+      <% if(currUser) {%>
+        <h4 class="mb-3">Leave a Review</h4>
+        <form action="/listings/<%= listing.id %>/reviews" method="POST" novalidate class="needs-validation mb-4">
+          <div class="mb-3 mt-3">
+            <label for="rating" class="form-label fw-bold small">Rating</label>
+            <fieldset class="starability-basic">
+              <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+              <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+              <label for="first-rate1" title="Terrible">1 star</label>
+              <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+              <label for="first-rate2" title="Not good">2 stars</label>
+              <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+              <label for="first-rate3" title="Average">3 stars</label>
+              <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+              <label for="first-rate4" title="Very good">4 stars</label>
+              <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+              <label for="first-rate5" title="Amazing">5 stars</label>
+            </fieldset>
+          </div>
+          <div class="mb-3">
+            <label for="comment" class="form-label fw-bold small">Comments</label>
+            <textarea name="review[comment]" id="comment" cols="30" rows="4" class="form-control" placeholder="Share your experience staying here..." required></textarea>
+            <div class="invalid-feedback">Please enter a review comment.</div>
+          </div>
+          <button class="btn btn-dark">Submit Review</button>
+        </form>
+        <hr>
+      <% } %>
+
+      <% if(listing.reviews.length > 0){%>
+        <h4 class="mb-4"><i class="fa-solid fa-comments me-2 text-danger"></i>Guest Reviews (<%= listing.reviews.length %>)</h4>
+        <div class="row">
+          <% for(review of listing.reviews){%>
+            <div class="col-12 col-md-6 mb-4">
+              <div class="review-card">
+                <div>
+                  <div class="review-header">
+                    <div class="review-avatar">
+                      <%= review.author ? review.author.username.charAt(0) : "G" %>
+                    </div>
+                    <div>
+                      <div class="review-user-name">@<%= review.author ? review.author.username : "Guest" %></div>
+                      <div class="text-secondary small" style="font-size: 0.8rem;">Reviewed stay</div>
+                    </div>
+                  </div>
+                  <p class="starability-result card-text mb-2" data-rating="<%= review.rating %>"></p>
+                  <p class="review-comment"><%= review.comment %></p>
+                </div>
+                <% if(currUser && review.author && review.author._id.equals(currUser._id)) {%>
+                  <form class="text-end mt-2" method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+                    <button class="btn btn-sm btn-outline-danger border-0"><i class="fa-solid fa-trash-can me-1"></i>Delete Review</button>
+                  </form>
+                <% } %>
+              </div>
+            </div>
+          <%}%>
+        </div>
+      <%}%>
+    </div>
+  </div>
+
+  <!-- Map Section -->
+  <div class="row map-section">
+    <div class="col-12">
+      <h3>Where you'll be staying</h3>
+      <div id="map" class="rounded shadow-sm border"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Interactive Mock Payment Gateway Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content checkout-modal-content">
+      
+      <!-- Loading Screen Overlay -->
+      <div id="paymentLoadingOverlay" class="d-none position-absolute w-100 h-100 top-0 start-0 bg-white bg-opacity-75 d-flex flex-column align-items-center justify-content-center" style="z-index: 1050; border-radius: 16px;">
+        <div class="spinner-border text-danger mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
+        <h5 class="text-dark fw-bold">Processing payment securely...</h5>
+        <p class="text-secondary small">Do not close this window or refresh the page.</p>
+      </div>
+
+      <!-- Main Payment checkout form -->
+      <div id="paymentMainForm">
+        <div class="modal-header checkout-modal-header d-flex justify-content-between align-items-center">
+          <div>
+            <h5 class="modal-title fw-bold text-dark" id="paymentModalLabel"><i class="fa-solid fa-lock text-success me-2"></i>Secure Checkout</h5>
+            <p class="text-secondary mb-0 small" style="font-size: 0.75rem;">Powered by WanderPay System</p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body checkout-modal-body">
+          <!-- Summary card -->
+          <div class="p-3 mb-4 bg-light rounded border text-dark">
+            <div class="row align-items-center">
+              <div class="col-4">
+                <img src="<%= listing.image.url %>" class="img-fluid rounded border" alt="stay image" style="height: 60px; object-fit: cover; width: 100%;">
+              </div>
+              <div class="col-8">
+                <h6 class="fw-bold mb-1 text-truncate" style="font-size: 0.9rem;"><%= listing.title %></h6>
+                <p class="small text-secondary mb-0"><%= listing.location %>, <%= listing.country %></p>
+                <p class="small text-danger fw-bold mb-0" id="modalNightsDetail">3 nights stay</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Tabs -->
+          <div class="checkout-tabs">
+            <div class="checkout-tab active" id="tabCard" onclick="switchPayMethod('card')"><i class="fa-solid fa-credit-card me-2"></i>Card</div>
+            <div class="checkout-tab" id="tabUpi" onclick="switchPayMethod('upi')"><i class="fa-solid fa-mobile-screen me-2"></i>UPI</div>
+          </div>
+
+          <!-- Card Form details -->
+          <div id="cardPayForm">
+            <!-- Mock Card Image Graphic -->
+            <div class="cc-graphic mb-4">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="cc-chip"></div>
+                <i class="fa-brands fa-cc-visa fs-2"></i>
+              </div>
+              <div class="cc-number-display" id="ccDisplayNum">•••• •••• •••• ••••</div>
+              <div class="cc-footer">
+                <div>
+                  <div class="small opacity-50" style="font-size: 0.65rem;">Card Holder</div>
+                  <div class="fw-bold" id="ccDisplayName">YOUR NAME</div>
+                </div>
+                <div>
+                  <div class="small opacity-50" style="font-size: 0.65rem;">Expires</div>
+                  <div class="fw-bold" id="ccDisplayExpiry">MM/YY</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fields -->
+            <div class="mb-3 text-dark">
+              <label class="form-label small fw-bold">Cardholder Name</label>
+              <input type="text" class="form-control" id="cardNameInput" placeholder="John Doe" oninput="updateCCGraphic()">
+            </div>
+            <div class="mb-3 text-dark">
+              <label class="form-label small fw-bold">Card Number</label>
+              <input type="text" class="form-control" id="cardNumberInput" placeholder="4111 2222 3333 4444" maxlength="19" oninput="formatCardNum(this); updateCCGraphic();">
+            </div>
+            <div class="row text-dark">
+              <div class="col-6 mb-3">
+                <label class="form-label small fw-bold">Expiry Date</label>
+                <input type="text" class="form-control" id="cardExpiryInput" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this); updateCCGraphic();">
+              </div>
+              <div class="col-6 mb-3">
+                <label class="form-label small fw-bold">CVV</label>
+                <input type="password" class="form-control" id="cardCvvInput" placeholder="•••" maxlength="3">
+              </div>
+            </div>
+          </div>
+
+          <!-- UPI Form details -->
+          <div id="upiPayForm" class="d-none text-center py-3 text-dark">
+            <i class="fa-solid fa-qrcode fs-1 text-danger mb-3"></i>
+            <h6 class="fw-bold">Pay using UPI App</h6>
+            <p class="text-secondary small mb-3">Enter your UPI ID below to receive a mock request on your phone.</p>
+            <div class="input-group mb-3 mx-auto" style="max-width: 320px;">
+              <input type="text" class="form-control" id="upiIdInput" placeholder="name@upi">
+              <button class="btn btn-outline-danger fw-bold" type="button" onclick="alert('UPI ID Verified!')">Verify</button>
+            </div>
+            <div class="d-flex justify-content-center gap-4 mt-3 opacity-75">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="upi logo" style="height: 20px;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google-Pay-Logo.svg" alt="gpay logo" style="height: 20px;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg" alt="paytm logo" style="height: 20px;">
+            </div>
+          </div>
+
+          <!-- Pay Button -->
+          <button class="reserve-btn mt-3" type="button" onclick="submitPayment()"><i class="fa-solid fa-shield-halved me-2"></i>Pay <span id="modalPayBtnVal">₹0</span></button>
+          
+          <div class="text-center mt-3">
+            <span class="text-secondary small" style="font-size: 0.72rem;"><i class="fa-solid fa-shield text-success me-1"></i>Your information is encrypted with 256-bit SSL security.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Screen Confirmation -->
+      <div id="paymentSuccessScreen" class="d-none">
+        <div class="modal-body checkout-modal-body success-screen text-dark">
+          <div class="success-checkmark"><i class="fa-solid fa-check"></i></div>
+          <h4 class="fw-bold">Booking Confirmed!</h4>
+          <p class="text-secondary">Your stay at <%= listing.title %> has been successfully secured.</p>
+          
+          <div class="success-ticket">
+            <h6 class="fw-bold border-bottom pb-2 mb-3"><i class="fa-solid fa-circle-info text-danger me-2"></i>Booking Voucher</h6>
+            <div class="success-ticket-row">
+              <span class="text-secondary">Booking Ref:</span>
+              <span class="fw-bold" id="ticketRefNum">WNDR-829304</span>
+            </div>
+            <div class="success-ticket-row">
+              <span class="text-secondary">Stay:</span>
+              <span class="fw-bold" id="ticketStayTitle"><%= listing.title %></span>
+            </div>
+            <div class="success-ticket-row">
+              <span class="text-secondary">Dates:</span>
+              <span class="fw-bold" id="ticketDates">Jun 10 - Jun 13</span>
+            </div>
+            <div class="success-ticket-row">
+              <span class="text-secondary">Guests:</span>
+              <span class="fw-bold" id="ticketGuests">2 guests</span>
+            </div>
+            <div class="success-ticket-row">
+              <span class="text-secondary">Payment Method:</span>
+              <span class="fw-bold" id="ticketPayMethod">Credit Card</span>
+            </div>
+            <div class="success-ticket-row mt-3 pt-2">
+              <span class="text-secondary">Total Paid:</span>
+              <span class="text-danger fw-bold" id="ticketTotalAmount">₹0</span>
+            </div>
+          </div>
+
+          <button class="reserve-btn mt-4 bg-dark border-0" type="button" data-bs-dismiss="modal">Close & Go Back</button>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
 <script src="/js/map.js"></script>
 
+<script>
+  // Date calculations logic
+  const listingPrice = <%= listing.price %>;
+
+  // Initialize dates: checkin = tomorrow, checkout = 3 days later
+  window.onload = function() {
+    const today = new Date();
+    const checkin = new Date(today);
+    checkin.setDate(today.getDate() + 1);
+    
+    const checkout = new Date(checkin);
+    checkout.setDate(checkin.getDate() + 3);
+    
+    document.getElementById("checkinDate").value = formatDate(checkin);
+    document.getElementById("checkoutDate").value = formatDate(checkout);
+    
+    calculateNights();
+  };
+
+  function formatDate(date) {
+    const yyyy = date.getFullYear();
+    let mm = date.getMonth() + 1;
+    let dd = date.getDate();
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+    return yyyy + '-' + mm + '-' + dd;
+  }
+
+  function calculateNights() {
+    const checkinVal = document.getElementById("checkinDate").value;
+    const checkoutVal = document.getElementById("checkoutDate").value;
+    
+    if (!checkinVal || !checkoutVal) return;
+    
+    const checkinDate = new Date(checkinVal);
+    const checkoutDate = new Date(checkoutVal);
+    
+    let timeDiff = checkoutDate.getTime() - checkinDate.getTime();
+    let nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    
+    if (nights <= 0) {
+      // Auto-correct checkout to checkin + 1 day
+      const nextDay = new Date(checkinDate);
+      nextDay.setDate(checkinDate.getDate() + 1);
+      document.getElementById("checkoutDate").value = formatDate(nextDay);
+      nights = 1;
+    }
+    
+    updatePricingTable(nights);
+  }
+
+  function updatePricingTable(nights) {
+    const rawCost = listingPrice * nights;
+    const gstCost = Math.round(rawCost * 0.18);
+    const totalCost = rawCost + gstCost;
+    
+    // Update booking card widget display
+    document.getElementById("nightsLabel").innerText = `₹${listingPrice.toLocaleString("en-IN")} x ${nights} night${nights > 1 ? 's' : ''}`;
+    document.getElementById("nightsCost").innerText = `₹${rawCost.toLocaleString("en-IN")}`;
+    document.getElementById("gstCost").innerText = `₹${gstCost.toLocaleString("en-IN")}`;
+    document.getElementById("totalCost").innerText = `₹${totalCost.toLocaleString("en-IN")}`;
+    
+    // Update booking modal details
+    document.getElementById("modalNightsDetail").innerText = `${nights} night${nights > 1 ? 's' : ''} stay`;
+    document.getElementById("modalPayBtnVal").innerText = `₹${totalCost.toLocaleString("en-IN")}`;
+    document.getElementById("ticketTotalAmount").innerText = `₹${totalCost.toLocaleString("en-IN")}`;
+    
+    // Set formatted dates for ticket
+    const checkinVal = new Date(document.getElementById("checkinDate").value);
+    const checkoutVal = new Date(document.getElementById("checkoutDate").value);
+    const options = { month: 'short', day: 'numeric' };
+    document.getElementById("ticketDates").innerText = `${checkinVal.toLocaleDateString('en-US', options)} - ${checkoutVal.toLocaleDateString('en-US', options)}, ${checkinVal.getFullYear()}`;
+  }
+
+  // Payment gateway controls
+  let activeMethod = 'card';
+
+  function switchPayMethod(method) {
+    activeMethod = method;
+    const tabCard = document.getElementById("tabCard");
+    const tabUpi = document.getElementById("tabUpi");
+    const cardForm = document.getElementById("cardPayForm");
+    const upiForm = document.getElementById("upiPayForm");
+    
+    if (method === 'card') {
+      tabCard.classList.add("active");
+      tabUpi.classList.remove("active");
+      cardForm.classList.remove("d-none");
+      upiForm.classList.add("d-none");
+    } else {
+      tabCard.classList.remove("active");
+      tabUpi.classList.add("active");
+      cardForm.classList.add("d-none");
+      upiForm.classList.remove("d-none");
+    }
+  }
+
+  // Formatting and update handlers
+  function formatCardNum(input) {
+    let code = input.value.replace(/\D/g, '').substring(0, 16);
+    let formatted = code.match(/.{1,4}/g);
+    input.value = formatted ? formatted.join(' ') : '';
+  }
+
+  function formatExpiry(input) {
+    let code = input.value.replace(/\D/g, '').substring(0, 4);
+    if (code.length >= 3) {
+      input.value = code.substring(0, 2) + '/' + code.substring(2, 4);
+    } else {
+      input.value = code;
+    }
+  }
+
+  function updateCCGraphic() {
+    const num = document.getElementById("cardNumberInput").value;
+    const name = document.getElementById("cardNameInput").value;
+    const expiry = document.getElementById("cardExpiryInput").value;
+    
+    document.getElementById("ccDisplayNum").innerText = num || "•••• •••• •••• ••••";
+    document.getElementById("ccDisplayName").innerText = name.toUpperCase() || "YOUR NAME";
+    document.getElementById("ccDisplayExpiry").innerText = expiry || "MM/YY";
+  }
+
+  function submitPayment() {
+    // Basic validation
+    if (activeMethod === 'card') {
+      const name = document.getElementById("cardNameInput").value.trim();
+      const num = document.getElementById("cardNumberInput").value.trim();
+      const exp = document.getElementById("cardExpiryInput").value.trim();
+      const cvv = document.getElementById("cardCvvInput").value.trim();
+      
+      if (!name || num.length < 19 || exp.length < 5 || cvv.length < 3) {
+        alert("Please enter all card details correctly.");
+        return;
+      }
+    } else {
+      const upiId = document.getElementById("upiIdInput").value.trim();
+      if (!upiId || !upiId.includes('@')) {
+        alert("Please enter a valid UPI ID (e.g., name@upi).");
+        return;
+      }
+    }
+    
+    // Simulate secure transaction
+    const loader = document.getElementById("paymentLoadingOverlay");
+    loader.classList.remove("d-none");
+    
+    setTimeout(() => {
+      loader.classList.add("d-none");
+      
+      // Update checkout success ticket info
+      const randomRef = "WNDR-" + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById("ticketRefNum").innerText = randomRef;
+      document.getElementById("ticketGuests").innerText = document.getElementById("guestCountSelect").value;
+      document.getElementById("ticketPayMethod").innerText = activeMethod === 'card' ? "Credit Card" : "UPI Pay";
+      
+      // Toggle screens
+      document.getElementById("paymentMainForm").classList.add("d-none");
+      document.getElementById("paymentSuccessScreen").classList.remove("d-none");
+    }, 2500);
+  }
+  
+  // Reset payment popup screens when modal is closed
+  const paymentModalElement = document.getElementById('paymentModal');
+  paymentModalElement.addEventListener('hidden.bs.modal', function () {
+    document.getElementById("paymentMainForm").classList.remove("d-none");
+    document.getElementById("paymentSuccessScreen").classList.add("d-none");
+    document.getElementById("paymentLoadingOverlay").classList.add("d-none");
+    
+    // Clear inputs
+    document.getElementById("cardNameInput").value = "";
+    document.getElementById("cardNumberInput").value = "";
+    document.getElementById("cardExpiryInput").value = "";
+    document.getElementById("cardCvvInput").value = "";
+    document.getElementById("upiIdInput").value = "";
+    updateCCGraphic();
+  });
+</script>
