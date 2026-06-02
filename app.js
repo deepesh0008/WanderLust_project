@@ -59,7 +59,7 @@ async function main() {
 async function seedAdminUser() {
     try {
         const adminUsername = process.env.ADMIN_USERNAME || "admin";
-        const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
+        const adminPassword = process.env.ADMIN_PASSWORD || "adminpassword123";
         const adminEmail = process.env.ADMIN_EMAIL || "admin@wanderlust.com";
 
         const existingAdmin = await User.findOne({ username: adminUsername });
