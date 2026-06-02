@@ -118,8 +118,15 @@ app.all("*"  , (req,res,next) => {
 });
 
 app.use((err, req, res, next) => {
-    // Deconstructing Express Error....
-    let { statusCode = 500, message = "Something Went Wrong" } = err;
+    let { statusCode = 500 } = err;
+    let message = "Something Went Wrong! Please try again later.";
+    
+    if (statusCode === 404) {
+        message = err.message || "Page not Found";
+    } else {
+        console.error("Internal Server Error:", err);
+    }
+    
     res.status(statusCode).render("error.ejs", { message });
 });
 
