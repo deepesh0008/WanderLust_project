@@ -2,6 +2,16 @@ if(process.env.NODE_ENV != "production"){
     require('dotenv').config();
 };
 
+// Clean up environment variables (remove surrounding quotes if pasted from .env directly)
+for (const key in process.env) {
+    if (process.env[key] && typeof process.env[key] === 'string') {
+        let value = process.env[key].trim();
+        if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+            process.env[key] = value.slice(1, -1);
+        }
+    }
+}
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -53,7 +63,7 @@ const store = MongoStore.create({
     touchAfter : 24 * 3600,
 });
 
-store.on("error" , () => {
+store.on("error" , (err) => {
     console.log("Error in mongo session store" , err);
 });
 
