@@ -45,8 +45,9 @@ app.use(express.static(path.join(__dirname , "/public")));
 // const MONGO_URL = "mongodb://127.0.0.1:27017/wanderLust";
 const dbUrl = process.env.ATLASDB_URL;
 main()
-    .then(() => {
+    .then(async () => {
         console.log("Connected to DB");
+        await seedAdminUser();
     })
     .catch((err) => {
         console.log(err);
@@ -54,6 +55,28 @@ main()
 async function main() {
     await mongoose.connect(dbUrl, { family: 4 });
 };
+
+async function seedAdminUser() {
+    try {
+        const adminUsername = process.env.ADMIN_USERNAME || "admin";
+        const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
+        const adminEmail = process.env.ADMIN_EMAIL || "admin@wanderlust.com";
+
+        const existingAdmin = await User.findOne({ username: adminUsername });
+        if (!existingAdmin) {
+            const newAdmin = new User({
+                username: adminUsername,
+                email: adminEmail
+            });
+            await User.register(newAdmin, adminPassword);
+            console.log(`Default admin user seeded: ${adminUsername}`);
+        } else {
+            console.log(`Admin user '${adminUsername}' already exists in database.`);
+        }
+    } catch (err) {
+        console.error("Error seeding default admin user:", err.message);
+    }
+}
 
 const store = MongoStore.create({
     mongoUrl : dbUrl,
