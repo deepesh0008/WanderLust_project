@@ -5,7 +5,18 @@ const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 
 module.exports.index = async (req,res) => {
     const allListings = await Listing.find({});
-    res.render("listings/index.ejs" , {allListings});
+    
+    // Group listings by location
+    const groupedListings = {};
+    for (let listing of allListings) {
+        const loc = listing.location || "Other";
+        if (!groupedListings[loc]) {
+            groupedListings[loc] = [];
+        }
+        groupedListings[loc].push(listing);
+    }
+
+    res.render("listings/index.ejs" , {allListings, groupedListings});
 };
 
 module.exports.renderNewForm =  (req,res) => {

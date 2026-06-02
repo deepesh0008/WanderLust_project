@@ -6,80 +6,109 @@
 <style>
   #filters{
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
+    overflow-x: auto;
+  }
+  #filters::-webkit-scrollbar {
+    display: none;
   }
   .filter{
     text-align: center;
     margin-right: 2rem;
     margin-top: 2rem;
-    opacity: 0.7;
+    opacity: 0.6;
+    flex-shrink: 0;
+    transition: opacity 0.2s, border-bottom 0.2s;
+    border-bottom: 2px solid transparent;
+    padding-bottom: 0.5rem;
+    text-decoration: none;
+    color: inherit;
   }
   .filter:hover{
     opacity: 1;
     cursor: pointer;
+    border-bottom: 2px solid #222222;
   }
   .filter p{
     font-size: 0.8rem;
+    margin-bottom: 0;
+    font-weight: 500;
   }
   .tax-info{
     display: none;
   }
   .tax-toggle{
-    border: 1px solid black;
-    border-radius: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 2rem;
     height: 3.25rem;
-    padding: 1rem;
-    margin-left: 5rem;
+    padding: 0 1.5rem;
+    margin-left: auto;
+    margin-right: 1rem;
     display: flex;
     align-items: center;
+    margin-top: 1.5rem;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    background-color: white;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    white-space: nowrap;
+    width: max-content;
+  }
+  .tax-toggle:hover{
+    border-color: #222222;
+  }
+  .tax-toggle .form-check-label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
   }
 </style>
 <div id="filters">
-  <div class="filter">
+  <a href="/listings?category=trending" class="filter">
     <div><i class="fa-solid fa-fire"></i></div>
     <p>Trending</p>
-  </div>
-  <div class="filter">
+  </a>
+  <a href="/listings?category=rooms" class="filter">
     <div><i class="fa-solid fa-bed"></i></div>
     <p>Rooms</p>
-  </div>
-  <div class="filter">
+  </a>
+  <a href="/listings?category=iconic-cities" class="filter">
     <div><i class="fa-solid fa-mountain-city"></i></div>
     <p>Iconic cities</p>
-  </div>
-  <div class="filter">
+  </a>
+  <a href="/listings?category=mountains" class="filter">
     <div><i class="fa-solid fa-mountain-sun"></i></div>
     <p>Mountains</p>
-  </div>
-  <div class="filter">
+  </a>
+  <a href="/listings?category=castles" class="filter">
     <div><i class="fa-brands fa-fort-awesome"></i></div>
     <p>Castles</p>
-  </div>
-  <div class="filter">
+  </a>
+  <a href="/listings?category=amazing-pools" class="filter">
     <div><i class="fa-solid fa-person-swimming"></i></div>
     <p>Amazing pools</p>
-  </div>
-  <div class="filter">
+  </a>
+  <a href="/listings?category=camping" class="filter">
     <div><i class="fa-solid fa-campground"></i></div>
     <p>Camping</p>
-  </div>
-  <div class="filter">
+  </a>
+  <a href="/listings?category=farms" class="filter">
     <div><i class="fa-solid fa-cow"></i></div>
     <p>Farms</p>
-  </div>
-  <div class="filter">
+  </a>
+  <a href="/listings?category=arctic" class="filter">
     <div><i class="fa-solid fa-snowman"></i></div>
     <p>Arctic</p>
-  </div>
-  <div class="filter">
+  </a>
+  <a href="/listings?category=domes" class="filter">
     <div><i class="fa-solid fa-igloo"></i></div>
     <p>Domes</p>
-  </div>
-  <div class="filter">
+  </a>
+  <a href="/listings?category=boats" class="filter">
     <div><i class="fa-solid fa-sailboat"></i></div>
     <p>Boats</p>
-  </div>
+  </a>
 
   <div class="tax-toggle">
     <div class="form-check form-switch-reverse">
@@ -88,25 +117,47 @@
     </div>
   </div>
 </div>
-<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
-  <% for(let listing of allListings) { %>
-    <a href="/listings/<%= listing._id %>" class="listing-link">
-      <div class="card col listing-card">
-        <img 
-          src="<%= listing.image.url%>" 
-          class="card-img-top" 
-          alt="listing_image" 
-          style="height: 20rem;">
-          <div class="card-img-overlay"></div>
-        <div class="card-body">
-          <p class="card-text">
-            <b><%= listing.title %><br>&#8377;</b>
-            <%= listing.price.toLocaleString("en-IN") %> / night
-            <i class="tax-info">&nbsp; +18%  GST</i>
-          </p>
-        </div>
+<div class="mt-4">
+  <% for (let location in groupedListings) { %>
+    <div class="listing-section">
+      <div class="d-flex align-items-center mb-2">
+        <h2 class="section-title mb-0">Popular homes in <%= location %></h2>
+        <i class="fa-solid fa-arrow-right ms-3 fs-6 bg-light rounded-circle p-2 shadow-sm border" style="cursor:pointer"></i>
       </div>
-  </a>
+      
+      <div class="horizontal-scroll-container mt-3">
+        <% for(let listing of groupedListings[location]) { %>
+          <div class="listing-card-wrapper">
+            <a href="/listings/<%= listing._id %>" class="listing-link d-block">
+              <div class="listing-card h-100 d-flex flex-column">
+                <div class="position-relative">
+                  <span class="guest-badge">Guest favourite</span>
+                  <i class="fa-regular fa-heart heart-icon"></i>
+                  <img 
+                    src="<%= listing.image.url%>" 
+                    onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=2000';"
+                    class="card-img-top" 
+                    alt="listing_image" 
+                    style="height: 17rem; object-fit: cover;">
+                  <div class="card-img-overlay"></div>
+                </div>
+                <div class="card-body">
+                  <div class="card-text-header">
+                    <span class="card-title-bold"><%= listing.title %></span>
+                    <span class="card-rating"><i class="fa-solid fa-star" style="font-size: 0.8rem;"></i> 4.93</span>
+                  </div>
+                  <p class="card-desc"><%= listing.location %>, <%= listing.country %></p>
+                  <p class="card-price">
+                    &#8377;<%= listing.price.toLocaleString("en-IN") %> <span class="fw-normal">night</span>
+                    <i class="tax-info">&nbsp; +18%  GST</i>
+                  </p>
+                </div>
+              </div>
+            </a>
+          </div>
+        <% } %>
+      </div>
+    </div>
   <% } %>
 </div>
 <script>

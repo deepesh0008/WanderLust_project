@@ -42,7 +42,7 @@ main()
         console.log(err);
     });
 async function main() {
-    await mongoose.connect(dbUrl);
+    await mongoose.connect(dbUrl, { family: 4 });
 };
 
 const store = MongoStore.create({
